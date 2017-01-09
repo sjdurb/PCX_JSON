@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<title>
+			PCX Javascript Test
+		</title>
+		<script src="pcxcontroller.js"></script>
+	</head>
+
+	<body>
+	</body>
+
+	<script>
+
+		// Initialize controller object (defined in pcxcontroller.js)
+		var controller = PCXController("station1", "192.168.0.5:1523");
+
+		// Callback function for successful retrieval of data from controller
+		// (Continuously calls itself)
+		function processRawBusInfo(data) {
+			document.body.innerHTML = '';
+			var body = document.body.innerHTML;
+			
+			if (data != null) {
+				for (var i = 0; i < data.length; i++) {
+					document.body.innerHTML += '<h3>Module' + (i + 1) + '</h3>';
+					document.body.innerHTML += 'ID: ' + data[i].id + '<br>';
+					document.body.innerHTML += 'IN: [';
+					for (var j = 0; j < data[i].in.length; j++)
+						document.body.innerHTML += data[i].in[j] + [']<br>',','][~~(j < data[i].in.length - 1)];
+					document.body.innerHTML += 'OUT: [';
+					for (var j = 0; j < data[i].out.length; j++)
+						document.body.innerHTML += data[i].out[j] + [']<br>',','][~~(j < data[i].out.length - 1)];
+					document.body.innerHTML += '<br>'
+				}
+			}
+			else
+				document.body.innerHTML = 'Error getting bus data.';
+				
+			setTimeout( function() { 
+				controller.getBusInfo(processRawBusInfo);
+			}, 500);
+		}
+		
+		controller.getBusInfo(processRawBusInfo);
+
+	</script>
+
+</html>
